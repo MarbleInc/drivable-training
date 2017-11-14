@@ -65,12 +65,16 @@ base_columns = [
 def build_estimator(model_dir, model_type):
   """Build an estimator."""
   if model_type == "wide":
+    optimizer=tf.train.FtrlOptimizer(
+      learning_rate=0.1,
+      l1_regularization_strength=1.0,
+      l2_regularization_strength=1.0)
     m = tf.estimator.LinearClassifier(
-      model_dir=model_dir, feature_columns=base_columns)
+      model_dir=model_dir, feature_columns=base_columns, optimizer=optimizer)
   return m
 
 
-def input_fn(data_file, num_epochs, shuffle):
+def input_fn(data_file, num_epochs, shuffle, num_threads=5):
   """Input builder function."""
 
   df_data = pd.read_csv(
@@ -94,7 +98,7 @@ def input_fn(data_file, num_epochs, shuffle):
       batch_size=20,
       num_epochs=num_epochs,
       shuffle=shuffle,
-      num_threads=5)
+      num_threads=num_threads)
 
 
 def train_and_eval(model_dir, model_type, train_steps, train_data, test_data):
@@ -121,7 +125,7 @@ def train_and_eval(model_dir, model_type, train_steps, train_data, test_data):
   # for key in sorted(results):
   #   print("%s: %s" % (key, results[key]))
 
-  predictions = list(m.predict(input_fn=input_fn(test_file_name, num_epochs=1, shuffle=False)))
+  predictions = list(m.predict(input_fn=input_fn(test_file_name, num_epochs=1, shuffle=False, num_threads=1)))
   #print (predictions)
   for i, p in enumerate(predictions):
     print("Prediction %s: %s" % (i + 1, p["classes"]))
@@ -164,13 +168,13 @@ if __name__ == "__main__":
   parser.add_argument(
       "--train_data",
       type=str,
-      default="/home/ammar/data/tflow/driv.train",
+      default="/home/ammar/data/tflow/drivable/driv.train",
       help="Path to the training data."
   )
   parser.add_argument(
       "--test_data",
       type=str,
-      default="/home/ammar/data/tflow/driv.test",
+      default="/home/ammar/data/tflow/drivable/driv.test",
       help="Path to the test data."
   )
   FLAGS, unparsed = parser.parse_known_args()
