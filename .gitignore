@@ -1,0 +1,40 @@
+.git
+*~
+.DS_Store
+*.sublime-workspace
+node_modules
+setup/xsens/
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.pyc
+
+# Compiled Dynamic libraries
+*.so
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Vim files
+*.swp
+*.swo
+*.swn
+
+# Media files
+*.ogv
+
+build/
+build_isolated/
+devel_isolated/
+cmake_local/
+devel/
+install/
+EXTERNAL/g2o
+doc/doxygen/YES
+doc/doxygen/html
+src/ros_external/src/CMakeLists.txt
+src/modules/g2o/bin
+src/modules/g2o/lib

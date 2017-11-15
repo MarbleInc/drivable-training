@@ -28,7 +28,7 @@ import tensorflow as tf
 
 
 CSV_COLUMNS = [
-  "h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11", "h12", "h13", "h14", "h15", "h16", "h17","h18", "h19", "h20", "h21", "h22", "h23", "label"
+  "h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11", "h12", "h13", "h14", "h15", "h16", "h17","h18", "h19", "h20", "h21", "h22", "h23", "h24", "h25", "h26", "h27", "h28", "h29", "h30", "h31", "h32", "label"
 ]
 
 # Continuous base columns.
@@ -56,27 +56,48 @@ h20 = tf.feature_column.numeric_column("h20")
 h21 = tf.feature_column.numeric_column("h21")
 h22 = tf.feature_column.numeric_column("h22")
 h23 = tf.feature_column.numeric_column("h23")
+h24 = tf.feature_column.numeric_column("h24")
+h25 = tf.feature_column.numeric_column("h25")
+h26 = tf.feature_column.numeric_column("h26")
+h27 = tf.feature_column.numeric_column("h27")
+h28 = tf.feature_column.numeric_column("h28")
+h29 = tf.feature_column.numeric_column("h29")
+h30 = tf.feature_column.numeric_column("h30")
+h31 = tf.feature_column.numeric_column("h31")
+h32 = tf.feature_column.numeric_column("h32")
 
 # Wide columns and deep columns.
 base_columns = [
-   h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17,h18, h19, h20, h21, h22, h23
+   h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17,h18, h19, h20, h21, h22, h23, h24, h25, h26, h27,
+  h28, h29, h30, h31, #h32,
 ]
 
 def build_estimator(model_dir, model_type):
   """Build an estimator."""
   if model_type == "wide":
-    optimizer=tf.train.FtrlOptimizer(
-      learning_rate=0.1,
-      l1_regularization_strength=1.0,
-      l2_regularization_strength=1.0)
-    m = tf.estimator.LinearClassifier(
-      model_dir=model_dir, feature_columns=base_columns, optimizer=optimizer)
+    # optimizer=tf.train.FtrlOptimizer(
+    #   learning_rate=5.0,
+    #   l1_regularization_strength=1.0,
+    #   l2_regularization_strength=1.0)
+    # kernel_mapper = tf.contrib.kernel_methods.RandomFourierFeatureMapper(
+    #   input_dim=24, output_dim=200, stddev=5.0, name='rffm')
+    # kernel_mappers = {base_columns: [kernel_mapper]}
+    # m = tf.contrib.kernel_methods.KernelLinearClassifier(
+    #   n_classes=2, optimizer=optimizer, kernel_mappers=kernel_mappers)
+    # m = tf.estimator.LinearClassifier(
+    #   model_dir=model_dir, feature_columns=base_columns, optimizer=optimizer, n_classes=2)
+    # m = tf.estimator.LinearClassifier(
+    #   model_dir=model_dir, feature_columns=base_columns, n_classes=2)
+    m = tf.estimator.DNNClassifier(feature_columns=base_columns,
+                                          hidden_units=[10, 20, 10],
+                                          n_classes=2,
+                                          model_dir=model_dir)
   return m
 
 
 def input_fn(data_file, num_epochs, shuffle, num_threads=5):
   """Input builder function."""
-
+  print(data_file)
   df_data = pd.read_csv(
       tf.gfile.Open(data_file),
       names=CSV_COLUMNS,
@@ -108,7 +129,6 @@ def train_and_eval(model_dir, model_type, train_steps, train_data, test_data):
   if test_data:
     test_file_name = test_data
 
-  print("steps: %d" % train_steps)
   # Specify file path below if want to find the output easily
   model_dir = tempfile.mkdtemp() if not model_dir else model_dir
 
@@ -128,7 +148,7 @@ def train_and_eval(model_dir, model_type, train_steps, train_data, test_data):
   predictions = list(m.predict(input_fn=input_fn(test_file_name, num_epochs=1, shuffle=False, num_threads=1)))
   #print (predictions)
   for i, p in enumerate(predictions):
-    print("Prediction %s: %s" % (i + 1, p["classes"]))
+    print("Prediction %s: %s %s" % (i, p["classes"], p["probabilities"]))
 
   # predictions = list(classifier.predict(input_fn=predict_input_fn))
   # predicted_classes = [p["classes"] for p in predictions]
@@ -168,13 +188,13 @@ if __name__ == "__main__":
   parser.add_argument(
       "--train_data",
       type=str,
-      default="/home/ammar/data/tflow/drivable/driv.train",
+      default="/home/ammar/data/tflow/drivable/driv3.train",
       help="Path to the training data."
   )
   parser.add_argument(
       "--test_data",
       type=str,
-      default="/home/ammar/data/tflow/drivable/driv.test",
+      default="/home/ammar/data/tflow/drivable/driv3.test",
       help="Path to the test data."
   )
   FLAGS, unparsed = parser.parse_known_args()
