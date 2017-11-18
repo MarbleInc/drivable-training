@@ -90,7 +90,7 @@ def build_estimator(model_dir, model_type):
     #   model_dir=model_dir, feature_columns=base_columns, n_classes=2)
     m = tf.estimator.DNNClassifier(feature_columns=base_columns,
                                           hidden_units=[10, 20, 10],
-                                          n_classes=2,
+                                          n_classes=3,
                                           model_dir=model_dir)
   return m
 
@@ -108,10 +108,21 @@ def input_fn(data_file, num_epochs, shuffle, num_threads=5):
   # remove NaN elements
 
   df_data = df_data.dropna(how="any", axis=0)
-  labels = df_data["label"].apply(lambda x: "l" in x).astype(int)
+  # convert label
+  def conv_label(x):
+    if (x =='l'):
+      return 1
+    elif (x == 'w'):
+      return 2
+    else:
+      return 0
 
+  #labels = df_data["label"].apply(lambda x: "l" in x).astype(int)
+  labels = df_data["label"].apply(lambda x: conv_label(x)).astype(int)
   print ("len df_data %d" % len(df_data))
   print(labels)
+  #my_dict = dict((i, labels.count(i)) for i in labels)#{i:labels.count(i) for i in labels}
+  #print(my_dict)
   return tf.estimator.inputs.pandas_input_fn(
       x=df_data,
       y=labels,
@@ -154,7 +165,6 @@ def train_and_eval(model_dir, model_type, train_steps, train_data, test_data):
   # predicted_classes = [p["classes"] for p in predictions]
   # Manual cleanup
   shutil.rmtree(model_dir)
-
 
 FLAGS = None
 
