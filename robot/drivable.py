@@ -25,7 +25,7 @@ import tempfile
 import pandas as pd
 from six.moves import urllib
 import tensorflow as tf
-
+import numpy as np
 
 CSV_COLUMNS = [
   "h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11", "h12", "h13", "h14", "h15", "h16", "h17","h18", "h19", "h20", "h21", "h22", "h23", "h24", "h25", "h26", "h27", "h28", "h29", "h30", "h31", "h32", "label"
@@ -90,7 +90,7 @@ def build_estimator(model_dir, model_type):
     #   model_dir=model_dir, feature_columns=base_columns, n_classes=2)
     m = tf.estimator.DNNClassifier(feature_columns=base_columns,
                                           hidden_units=[10, 20, 10],
-                                          n_classes=3,
+                                          n_classes=2,
                                           model_dir=model_dir)
   return m
 
@@ -112,17 +112,17 @@ def input_fn(data_file, num_epochs, shuffle, num_threads=5):
   def conv_label(x):
     if (x =='l'):
       return 1
-    elif (x == 'w'):
-      return 2
+    #elif (x == 'w'):
+    #  return 2
     else:
       return 0
 
   #labels = df_data["label"].apply(lambda x: "l" in x).astype(int)
   labels = df_data["label"].apply(lambda x: conv_label(x)).astype(int)
   print ("len df_data %d" % len(df_data))
-  print(labels)
-  #my_dict = dict((i, labels.count(i)) for i in labels)#{i:labels.count(i) for i in labels}
-  #print(my_dict)
+  l_mat =labels.as_matrix()
+  #my_dict = dict((i, l_mat.count(i)) for i in l_mat)#{i:labels.count(i) for i in labels}
+  print(np.bincount(l_mat))
   return tf.estimator.inputs.pandas_input_fn(
       x=df_data,
       y=labels,
