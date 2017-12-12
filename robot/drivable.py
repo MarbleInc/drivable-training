@@ -29,7 +29,7 @@ import numpy as np
 from tensorflow.contrib import predictor
 
 CSV_COLUMNS = [
-  "h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11", "h12", "h13", "h14", "h15", "h16", "h17","h18", "h19", "h20", "h21", "h22", "h23", "h24", "h25", "h26", "h27", "h28", "h29", "h30", "h31", "label"
+  "h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11", "h12", "label"
 ]
 
 # Continuous base columns.
@@ -46,31 +46,10 @@ h9 = tf.feature_column.numeric_column("h9")
 h10 = tf.feature_column.numeric_column("h10")
 h11 = tf.feature_column.numeric_column("h11")
 h12 = tf.feature_column.numeric_column("h12")
-h13 = tf.feature_column.numeric_column("h13")
-h14 = tf.feature_column.numeric_column("h14")
-h15 = tf.feature_column.numeric_column("h15")
-h16 = tf.feature_column.numeric_column("h16")
-h17 = tf.feature_column.numeric_column("h17")
-h18 = tf.feature_column.numeric_column("h18")
-h19 = tf.feature_column.numeric_column("h19")
-h20 = tf.feature_column.numeric_column("h20")
-h21 = tf.feature_column.numeric_column("h21")
-h22 = tf.feature_column.numeric_column("h22")
-h23 = tf.feature_column.numeric_column("h23")
-h24 = tf.feature_column.numeric_column("h24")
-h25 = tf.feature_column.numeric_column("h25")
-h26 = tf.feature_column.numeric_column("h26")
-h27 = tf.feature_column.numeric_column("h27")
-h28 = tf.feature_column.numeric_column("h28")
-h29 = tf.feature_column.numeric_column("h29")
-h30 = tf.feature_column.numeric_column("h30")
-h31 = tf.feature_column.numeric_column("h31")
-#h32 = tf.feature_column.numeric_column("h32")
 
 # Wide columns and deep columns.
 base_columns = [
-    #h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17,h18, h19, h20, h21, h22, h23, h24, h25, h26, h27,
-  h28, h29, h30, h31
+    h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12
 ]
 
 def build_estimator(model_dir, model_type):
@@ -90,38 +69,19 @@ def serving_input_receiver_fn():
   #inputs = {"x": tf.placeholder(shape=[None, 3], dtype=tf.float32)}
   # inputs = base_columns
   inputs = {
-            # "h0": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h1": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h2": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h3": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h4": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h5": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h6": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h7": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h8": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h9": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h10": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h11": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h12": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h13": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h14": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h15": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h16": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h17": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h18": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h19": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h20": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h21": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h22": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h23": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h24": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h25": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h26": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            # "h27": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            "h28": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            "h29": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            "h30": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            "h31": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h0": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h1": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h2": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h3": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h4": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h5": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h6": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h7": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h8": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h9": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h10": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h11": tf.placeholder(shape=[None, 1], dtype=tf.float32),
+            "h12": tf.placeholder(shape=[None, 1], dtype=tf.float32),
   }
   return tf.estimator.export.ServingInputReceiver(inputs, inputs)
 
@@ -136,24 +96,12 @@ def input_fn(data_file, num_epochs, shuffle, num_threads=5):
       engine="python",
       skiprows=1)
   # remove NaN elements
-  df_data = df_data.dropna(how="any", axis=0)
-  # convert label
-  def conv_label(x):
-    if (x =='l'):
-      return 1
-    #elif (x == 'w'):
-    #  return 2
-    else:
-      return 0
-
-  #labels = df_data["label"].apply(lambda x: "l" in x).astype(int)
-  #labels = df_data["label"].apply(lambda x: conv_label(x)).astype(int)
-  labels = df_data["label"]
-  #print(labels)
-
+  df_data = df_data.dropna(how="any", axis=0).astype(float)
+  print(df_data)
+  labels = df_data["label"].astype(int)
   print ("len df_data %d" % len(df_data))
   l_mat =labels.as_matrix()
-  #my_dict = dict((i, l_mat.count(i)) for i in l_mat)#{i:labels.count(i) for i in labels}
+  print(l_mat)
   print(np.bincount(l_mat))
   return tf.estimator.inputs.pandas_input_fn(
       x=df_data,
@@ -180,6 +128,8 @@ def train_and_eval(model_dir, model_type, train_steps, train_data, test_data):
       input_fn=input_fn(train_file_name, num_epochs=None, shuffle=True),
   #   input_fn=lambda: my_input_fn(train_file_name, perform_shuffle=True),
       steps=train_steps)
+
+  # Evaluation
   # set steps to None to run evaluation until all data consumed.
   # results = m.evaluate(
   #     input_fn=input_fn(test_file_name, num_epochs=1, shuffle=False),
@@ -187,12 +137,12 @@ def train_and_eval(model_dir, model_type, train_steps, train_data, test_data):
   # print("model directory = %s" % model_dir)
   # for key in sorted(results):
   #   print("%s: %s" % (key, results[key]))
-
+  # Export
   export_dir = m.export_savedmodel(
     export_dir_base="/home/ammar/data/tflow/drivable/robot/models/",
     serving_input_receiver_fn=serving_input_receiver_fn,
     as_text=True)
-
+  # Predict
   # predict_fn = predictor.from_saved_model("/home/ammar/data/tflow/drivable/robot/models/1512612563/", signature_def_key='predict')
 
   # i_data, i_labels = lambda: input_fn(test_file_name, num_epochs=1, shuffle=False, num_threads=1)
@@ -240,13 +190,13 @@ if __name__ == "__main__":
   parser.add_argument(
       "--train_data",
       type=str,
-      default="/home/ammar/data/tflow/drivable/robot/driv4.txt",
+      default="/home/ammar/data/tflow/drivable/robot/driv5_z.train",
       help="Path to the training data."
   )
   parser.add_argument(
       "--test_data",
       type=str,
-      default="/home/ammar/data/tflow/drivable/robot/driv4_2.test",
+      default="/home/ammar/data/tflow/drivable/robot/driv5_z.test",
       help="Path to the test data."
   )
   FLAGS, unparsed = parser.parse_known_args()
