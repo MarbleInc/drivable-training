@@ -26,11 +26,9 @@ import pandas as pd
 from six.moves import urllib
 import tensorflow as tf
 import numpy as np
-from tensorflow.contrib import predictor
 
 CSV_COLUMNS = [
-  #"h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11", "h12", "label"
-   "h1",  "h3",  "h5", "h7", "h9", "h11", "h12", "label"
+  "h0", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "h11", "h12", "h13", "h14", "h15", "h16", "h17","h18", "h19", "h20", "h21", "h22", "h23", "h24", "h25", "h26", "h27", "h28", "h29", "h30", "h31", "h32", "label"
 ]
 
 # Continuous base columns.
@@ -47,52 +45,55 @@ h9 = tf.feature_column.numeric_column("h9")
 h10 = tf.feature_column.numeric_column("h10")
 h11 = tf.feature_column.numeric_column("h11")
 h12 = tf.feature_column.numeric_column("h12")
+h13 = tf.feature_column.numeric_column("h13")
+h14 = tf.feature_column.numeric_column("h14")
+h15 = tf.feature_column.numeric_column("h15")
+h16 = tf.feature_column.numeric_column("h16")
+h17 = tf.feature_column.numeric_column("h17")
+h18 = tf.feature_column.numeric_column("h18")
+h19 = tf.feature_column.numeric_column("h19")
+h20 = tf.feature_column.numeric_column("h20")
+h21 = tf.feature_column.numeric_column("h21")
+h22 = tf.feature_column.numeric_column("h22")
+h23 = tf.feature_column.numeric_column("h23")
+h24 = tf.feature_column.numeric_column("h24")
+h25 = tf.feature_column.numeric_column("h25")
+h26 = tf.feature_column.numeric_column("h26")
+h27 = tf.feature_column.numeric_column("h27")
+h28 = tf.feature_column.numeric_column("h28")
+h29 = tf.feature_column.numeric_column("h29")
+h30 = tf.feature_column.numeric_column("h30")
+h31 = tf.feature_column.numeric_column("h31")
+h32 = tf.feature_column.numeric_column("h32")
 
 # Wide columns and deep columns.
 base_columns = [
-#    h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12
-  h1, h3, h5, h7, h9, h11, h12
+   h0, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17,h18, h19, h20, h21, h22, h23, h24, h25, h26, h27,
+  h28, h29, h30, h31, #h32,
 ]
 
 def build_estimator(model_dir, model_type):
   """Build an estimator."""
   if model_type == "wide":
+    # optimizer=tf.train.FtrlOptimizer(
+    #   learning_rate=5.0,
+    #   l1_regularization_strength=1.0,
+    #   l2_regularization_strength=1.0)
+    # kernel_mapper = tf.contrib.kernel_methods.RandomFourierFeatureMapper(
+    #   input_dim=24, output_dim=200, stddev=5.0, name='rffm')
+    # kernel_mappers = {base_columns: [kernel_mapper]}
+    # m = tf.contrib.kernel_methods.KernelLinearClassifier(
+    #   n_classes=2, optimizer=optimizer, kernel_mappers=kernel_mappers)
+    # m = tf.estimator.LinearClassifier(
+    #   model_dir=model_dir, feature_columns=base_columns, optimizer=optimizer, n_classes=2)
+    # m = tf.estimator.LinearClassifier(
+    #   model_dir=model_dir, feature_columns=base_columns, n_classes=2)
     m = tf.estimator.DNNClassifier(feature_columns=base_columns,
-                                          hidden_units=[5],
+                                          hidden_units=[10, 20, 10],
                                           n_classes=2,
-                                          #dropout=0.25,
-                                          optimizer=tf.train.ProximalAdagradOptimizer(
-                                            learning_rate=0.01,
-                                            l1_regularization_strength=0.5,
-                                            l2_regularization_strength=0.1
-                                          ),
-                                          #n_classes=4,
                                           model_dir=model_dir)
   return m
 
-def serving_input_receiver_fn():
-  """Build the serving inputs."""
-  # The outer dimension (None) allows us to batch up inputs for
-  # efficiency. However, it also means that if we want a prediction
-  # for a single instance, we'll need to wrap it in an outer list.
-  #inputs = {"x": tf.placeholder(shape=[None, 3], dtype=tf.float32)}
-  # inputs = base_columns
-  inputs = {
-            #"h0": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            "h1": tf.placeholder(shape=[None, 1], dtype=tf.float32, name="h1"),
-            #"h2": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            "h3": tf.placeholder(shape=[None, 1], dtype=tf.float32, name="h3"),
-            #"h4": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            "h5": tf.placeholder(shape=[None, 1], dtype=tf.float32, name="h5"),
-            #"h6": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            "h7": tf.placeholder(shape=[None, 1], dtype=tf.float32, name="h7"),
-            #"h8": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            "h9": tf.placeholder(shape=[None, 1], dtype=tf.float32, name="h9"),
-            #"h10": tf.placeholder(shape=[None, 1], dtype=tf.float32),
-            "h11": tf.placeholder(shape=[None, 1], dtype=tf.float32, name="h11"),
-            "h12": tf.placeholder(shape=[None, 1], dtype=tf.float32, name="h12"),
-  }
-  return tf.estimator.export.ServingInputReceiver(inputs, inputs)
 
 def input_fn(data_file, num_epochs, shuffle, num_threads=5):
   """Input builder function."""
@@ -105,30 +106,23 @@ def input_fn(data_file, num_epochs, shuffle, num_threads=5):
       engine="python",
       skiprows=1)
   # remove NaN elements
+
+  df_data = df_data.dropna(how="any", axis=0)
+  # convert label
   def conv_label(x):
-    if (x =='d'):
-      return 0
-    elif (x == 'w'):
+    if (x =='l'):
       return 1
-    elif (x == 'c'):
-      return 2
-    elif (x == 'o'):
-      return 3
+    #elif (x == 'w'):
+    #  return 2
     else:
-      return x.astype(float)
+      return 0
 
-  def bin_label(x):
-    if (x == 0):
-      return 0
-    else:
-      return 1
-  #df_data = df_data.dropna(how="any", axis=0).apply(lambda x: conv_label(x)).astype(float)
-  df_data = df_data.dropna(how="any", axis=0).astype(float)
-  #labels = df_data["label"].apply(lambda x: conv_label(x)).astype(int)
-  labels = df_data["label"].apply(lambda x : bin_label(x)).astype(int)
+  #labels = df_data["label"].apply(lambda x: "l" in x).astype(int)
+  labels = df_data["label"].apply(lambda x: conv_label(x)).astype(int)
+  print ("len df_data %d" % len(df_data))
   l_mat =labels.as_matrix()
+  #my_dict = dict((i, l_mat.count(i)) for i in l_mat)#{i:labels.count(i) for i in labels}
   print(np.bincount(l_mat))
-
   return tf.estimator.inputs.pandas_input_fn(
       x=df_data,
       y=labels,
@@ -137,6 +131,7 @@ def input_fn(data_file, num_epochs, shuffle, num_threads=5):
       num_epochs=num_epochs,
       shuffle=shuffle,
       num_threads=num_threads)
+
 
 def train_and_eval(model_dir, model_type, train_steps, train_data, test_data):
   """Train and evaluate the model."""
@@ -152,36 +147,19 @@ def train_and_eval(model_dir, model_type, train_steps, train_data, test_data):
   # set num_epochs to None to get infinite stream of data.
   m.train(
       input_fn=input_fn(train_file_name, num_epochs=None, shuffle=True),
-  #   input_fn=lambda: my_input_fn(train_file_name, perform_shuffle=True),
       steps=train_steps)
-
-  # Evaluation
   # set steps to None to run evaluation until all data consumed.
-  results = m.evaluate(
-      input_fn=input_fn(test_file_name, num_epochs=1, shuffle=False),
-      steps=None)
-  print("model directory = %s" % model_dir)
-  for key in sorted(results):
-    print("%s: %s" % (key, results[key]))
+  # results = m.evaluate(
+  #     input_fn=input_fn(test_file_name, num_epochs=1, shuffle=False),
+  #     steps=None)
+  # print("model directory = %s" % model_dir)
+  # for key in sorted(results):
+  #   print("%s: %s" % (key, results[key]))
 
-  # Export
-  # export_dir = m.export_savedmodel(
-  #   export_dir_base="/home/ammar/data/tflow/drivable/robot/models_mc/",
-  #   serving_input_receiver_fn=serving_input_receiver_fn,
-  #   as_text=True)
-
-  # Predict
-  # predict_fn = predictor.from_saved_model("/home/ammar/data/tflow/drivable/robot/models/1512612563/", signature_def_key='predict')
-
-  # i_data, i_labels = lambda: input_fn(test_file_name, num_epochs=1, shuffle=False, num_threads=1)
-
-  #predcitions_2 = predict_fn({"h0": h0})
+  predictions = list(m.predict(input_fn=input_fn(test_file_name, num_epochs=1, shuffle=False, num_threads=1)))
   #print (predictions)
-
-  # Run Predcitions
-  # predictions = list(m.predict(input_fn=input_fn(test_file_name, num_epochs=1, shuffle=False, num_threads=1)))
-  # for i, p in enumerate(predictions):
-  #   print("Prediction %s: %s %s" % (i, p["classes"], p["probabilities"]))
+  for i, p in enumerate(predictions):
+    print("Prediction %s: %s %s" % (i, p["classes"], p["probabilities"]))
 
   # predictions = list(classifier.predict(input_fn=predict_input_fn))
   # predicted_classes = [p["classes"] for p in predictions]
@@ -220,15 +198,13 @@ if __name__ == "__main__":
   parser.add_argument(
       "--train_data",
       type=str,
-      #default="/home/ammar/data/tflow/drivable/robot/data/carlos/carlos.train",
-      default="/home/ammar/data/local/2017-12-22t19-37-53.257366_5a3d5f106afeef001fb6b72c_happy3/a.train",
+      default="/home/ammar/data/tflow/drivable/driv3.train",
       help="Path to the training data."
   )
   parser.add_argument(
       "--test_data",
       type=str,
-      #default="/home/ammar/data/tflow/drivable/robot/data/carlos/carlos.train",
-      default="/home/ammar/data/local/2017-12-22t19-37-53.257366_5a3d5f106afeef001fb6b72c_happy3/a.train",
+      default="/home/ammar/data/tflow/drivable/driv3.test",
       help="Path to the test data."
   )
   FLAGS, unparsed = parser.parse_known_args()

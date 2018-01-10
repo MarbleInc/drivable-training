@@ -35,7 +35,7 @@ def build_estimator(model_dir, model_type):
 
 def my_input_fn(file_path, perform_shuffle=False, repeat_count=1):
    def decode_csv(line):
-       parsed_line = tf.decode_csv(line, [[0],[0],[0],[]], field_delim=' ')
+       parsed_line = tf.decode_csv(line, [[0],[0],[0],[]], field_delim=' ', na_value=' ')
        label = parsed_line[-1:] # Last element is the label
        del parsed_line[-1] # Delete last element
        features = parsed_line # Everything (but last element) are the features
@@ -133,13 +133,13 @@ if __name__ == "__main__":
   parser.add_argument(
       "--train_data",
       type=str,
-      default="/home/ammar/data/tflow/drivable/dnn_est.train",
+      default="/home/ammar/data/tflow/drivable/tf_dnn/dnn_est.train",
       help="Path to the training data."
   )
   parser.add_argument(
       "--test_data",
       type=str,
-      default="/home/ammar/data/tflow/drivable/dnn_est.test",
+      default="/home/ammar/data/tflow/drivable/tf_dnn/dnn_est.test",
       help="Path to the test data."
   )
   FLAGS, unparsed = parser.parse_known_args()
